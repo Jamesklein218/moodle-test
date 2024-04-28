@@ -46,4 +46,4 @@ pytest
 
 | ID         | Title         | Path                                                      |
 | ---------- | ------------- | --------------------------------------------------------- |
-| TC-000-000 | Test Selenium | [a relative link](tests/getting_started/test_selenium.py) |
+| TC-000-000 | Test Selenium | [a test_selenium.py](tests/getting_started/test_selenium.py) |
