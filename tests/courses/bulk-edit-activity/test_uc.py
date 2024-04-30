@@ -1,6 +1,8 @@
 
 from selenium import webdriver
 from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
 from utils.auth import login
 from utils.core import enable_edit_mode
@@ -18,26 +20,18 @@ def test_uc1():
 
     driver.find_element(By.CLASS_NAME, 'bulkEnable').click()
 
-    driver.implicitly_wait(5)
+    first_checkbox = WebDriverWait(driver, 5).until(lambda driver:driver.find_element(By.CSS_SELECTOR, "input[id^='cmCheckbox'][type='checkbox']"))
+    first_checkbox.click()
 
-    bulk_select_inputs = driver.find_elements(By.CSS_SELECTOR, "input[id^='cmCheckbox'][type='checkbox']")
+    # https://stackoverflow.com/questions/11908249/debugging-element-is-not-clickable-at-point-error
+    driver.execute_script("document.querySelector(\"#selectall\").click()")
+    # WebDriverWait(driver, 10).until(EC.invisibility_of_element_located((By.ID, 'selectall')))
+    # driver.find_element(By.ID, 'selectall').click()
 
-    assert len(bulk_select_inputs) > 0
+    bulk_select_inputs_after = driver.find_elements(By.CSS_SELECTOR, ".bulkselect input[id^='cmCheckbox'][type='checkbox']")
 
-    bulk_select_inputs[0].click()
-
-    selectall_btn = driver.find_element(By.ID, "selectall")
-
-    assert selectall_btn.get_attribute("disabled") == None
-
-    time.sleep(1)
-
-    selectall_btn.click()
-
-    # bulk_select_inputs_after = driver.find_elements(By.CSS_SELECTOR, ".bulkselect input[id^='cmCheckbox'][type='checkbox']")
-    #
-    # for bulk_select_input in bulk_select_inputs_after:
-    #     assert bulk_select_input.get_attribute("checked") == "true"
+    for bulk_select_input in bulk_select_inputs_after:
+        assert bulk_select_input.get_attribute("checked") == "true"
 
     driver.quit()
 
