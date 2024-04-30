@@ -12,3 +12,4 @@ tests/.pytest_cache/*
 geckodriver.log
 .venv/
 **/*/__pycache__/
+.vscode/
