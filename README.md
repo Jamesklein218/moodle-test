@@ -36,14 +36,16 @@ pip install -r requirements.txt
 
 > if you are on a different python version, for example python3.x you may have to replace `pip` with `pip3`
 
-4. Run all tests
+4. Run tests
 
 ```
-pytest
+pytest [<path-to-test>]
 ```
+
+Note: On Unix, if run test is slow, set DBUS_SESSION_BUS_ADDRESS = /dev/null ([https://stackoverflow.com/questions/28463934/selenium-chromedriver-hangs](Stack Overflow))
 
 ### List of all Testcase
 
-| ID         | Title         | Path                                                      |
-| ---------- | ------------- | --------------------------------------------------------- |
-| TC-000-000 | Test Selenium | [test_selenium.py](tests/getting_started/test_selenium.py) |
+| ID         | Title           | Path                                                       |
+| ---------- | --------------- | ---------------------------------------------------------- |
+| TC-000-000 | Getting Started | [test_selenium.py](tests/getting_started/test_selenium.py) |
