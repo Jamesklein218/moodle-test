@@ -39,7 +39,7 @@ pip install -r requirements.txt
 4. Run tests
 
 ```
-pytest [<path-to-test>]
+pytest [<path-to-test>] [-k '<test_name>']
 ```
 
 Note: On Unix, if run test is slow, set DBUS_SESSION_BUS_ADDRESS = /dev/null ([https://stackoverflow.com/questions/28463934/selenium-chromedriver-hangs](Stack Overflow))

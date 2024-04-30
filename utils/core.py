@@ -1,9 +1,10 @@
 
 from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
 
 def enable_edit_mode(driver):
     try:
-        editmode_button = driver.find_element(By.NAME, "setmode")
+        editmode_button = WebDriverWait(driver, 5).until(lambda driver: driver.find_element(By.NAME, "setmode"))
     except Exception:
         editmode_button = None
 
