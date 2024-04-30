@@ -48,11 +48,12 @@ def test_uc2_and_uc3():
 
     assert is_properly_setup
 
-    # Use case 2
     enable_edit_mode(driver)
 
+    # Sometimes not working, don't know why
     WebDriverWait(driver, 5).until(lambda driver: driver.find_element(By.CLASS_NAME, 'bulkEnable')).click()
 
+    # Use case 2: Hide activities
     checkboxes = WebDriverWait(driver, 5).until(lambda driver:driver.find_elements(By.CSS_SELECTOR, "input[id^='cmCheckbox'][type='checkbox']"))
 
     assert len(checkboxes) > 5
@@ -76,13 +77,11 @@ def test_uc2_and_uc3():
 
     driver.find_element(By.CLASS_NAME, 'modal-footer').find_elements(By.TAG_NAME, 'button')[1].click()
 
-    res = WebDriverWait(driver, 5).until(
+    WebDriverWait(driver, 5).until(
         lambda driver: 
             len(list(filter(lambda x: x.get_attribute('innerText') and "Hidden from students" in str(x.get_attribute('innerText')), driver.find_elements(By.CSS_SELECTOR, "button[id^='dropwdownbutton']")))) == 5)
 
-    assert res
-
-    # Use case 3
+    # Use case 3: Show activities
     checkboxes_1 = WebDriverWait(driver, 5).until(lambda driver:driver.find_elements(By.CSS_SELECTOR, "input[id^='cmCheckbox'][type='checkbox']"))
 
     assert len(checkboxes_1) > 5
@@ -106,11 +105,66 @@ def test_uc2_and_uc3():
 
     driver.find_element(By.CLASS_NAME, 'modal-footer').find_elements(By.TAG_NAME, 'button')[1].click()
 
-    res = WebDriverWait(driver, 10).until(
+    WebDriverWait(driver, 10).until(
         lambda driver: 
             len(list(filter(lambda x: x.get_attribute('innerText') and "Hidden from students" in str(x.get_attribute('innerText')), driver.find_elements(By.CSS_SELECTOR, "button[id^='dropwdownbutton']")))) == 0)
 
-    assert res
+    driver.quit()
+
+def test_uc4_and_uc6():
+    driver = webdriver.Chrome()
+
+    login(driver, "teacher", "moodle")
+
+    driver.get("https://school.moodledemo.net/course/view.php?id=59")
+
+    enable_edit_mode(driver)
+
+    # Sometimes not working, don't know why
+    WebDriverWait(driver, 5).until(lambda driver: driver.find_element(By.CLASS_NAME, 'bulkEnable')).click()
+
+    # Use case 4: Duplicate activities
+    checkboxes = WebDriverWait(driver, 5).until(lambda driver:driver.find_elements(By.CSS_SELECTOR, "input[id^='cmCheckbox'][type='checkbox']"))
+
+    assert len(checkboxes) >= 2
+
+    original_len = len(checkboxes)
+
+    for box in checkboxes[:2]:
+        driver.execute_script(f"document.getElementById(\"{box.get_attribute('id')}\").click()")
+
+    WebDriverWait(driver, 5).until(lambda driver: len(driver.find_elements(By.CSS_SELECTOR, "button[title='Duplicate activities'].disabled")) == 0)
+    driver.execute_script(f"document.querySelector(\"button[title='Duplicate activities']\").click()")
+
+    is_duplicated = WebDriverWait(driver, 5).until(lambda driver: len(driver.find_elements(By.CSS_SELECTOR, "input[id^='cmCheckbox'][type='checkbox']")) == 2 + original_len)
+
+    assert is_duplicated
+
+    # Use case 6: Delete activities
+    checkboxes_1 = WebDriverWait(driver, 5).until(lambda driver:driver.find_elements(By.CSS_SELECTOR, "input[id^='cmCheckbox'][type='checkbox']"))
+
+    assert len(checkboxes_1) >= 4
+
+    driver.execute_script(f"document.getElementById(\"{checkboxes_1[1].get_attribute('id')}\").click()")
+    driver.execute_script(f"document.getElementById(\"{checkboxes_1[3].get_attribute('id')}\").click()")
+
+    WebDriverWait(driver, 5).until(lambda driver: len(driver.find_elements(By.CSS_SELECTOR, "button[title='Delete activities'].disabled")) == 0)
+    driver.execute_script(f"document.querySelector(\"button[title='Delete activities']\").click()")
+
+    modal_footer = WebDriverWait(driver, 10).until(lambda driver:driver.find_element(By.CLASS_NAME, 'modal-footer'))
+
+    WebDriverWait(modal_footer, 10).until(lambda modal_footer:modal_footer.find_elements(By.TAG_NAME, 'button')[1]).click()
+
+    # TODO: currently not working
+    WebDriverWait(driver, 10).until(lambda driver: len(driver.find_elements(By.CSS_SELECTOR, "input[id^='cmCheckbox'][type='checkbox']")) == original_len)
 
     driver.quit()
 
+def test_uc5():
+    driver = webdriver.Chrome()
+
+    login(driver, "teacher", "moodle")
+
+    driver.get("https://school.moodledemo.net/course/view.php?id=59")
+
+    enable_edit_mode(driver)
