@@ -1,5 +1,3 @@
-
-import csv
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
@@ -11,15 +9,7 @@ import pytest
 
 from utils.auth import login
 from utils.readData import readDataFromExcel
-
-def setSelect(driver, eleId, value):
-    selEle = driver.find_element(By.ID, eleId)
-    selObj = Select(selEle)
-    selObj.select_by_visible_text(value)
-
-def setValueById(driver, eleId, value):
-    ele = driver.find_element(By.ID, eleId)
-    ele.send_keys(value)
+from utils.calendar import setSelect, setValueById, parseDate
 
 def test_bv1():
     driver = webdriver.Chrome()
@@ -72,7 +62,7 @@ def test_bv2():
     setValueById(driver, "id_timedurationminutes", "0")
 
     saveEventBtn.click()
-    time.sleep(1.5)
+    time.sleep(5)
 
     durationErrorMsg = driver.find_element(By.ID, "fgroup_id_error_durationgroup")
     assert durationErrorMsg.is_displayed() 
@@ -112,7 +102,7 @@ def test_bv3():
     setSelect(driver, "id_timedurationuntil_minute", "00")
 
     saveEventBtn.click()
-    time.sleep(1)
+    time.sleep(5)
 
     durationErrorMsg = driver.find_element(By.ID, "fgroup_id_error_durationgroup")
     assert durationErrorMsg.is_displayed() 
@@ -232,16 +222,11 @@ def test_bv5():
 
     driver.quit()
 
-def parseDate(rawDate):
-    return rawDate.split(',')
-
 test_data = readDataFromExcel("calendar_bva")
 @pytest.mark.parametrize("startDate,endDate,isValid", test_data)
 def test_bv6(startDate, endDate, isValid):
     start_time = parseDate(startDate)
     end_time = parseDate(endDate)
-    
-    print('[DBG]', start_time, end_time, isValid)
     
     driver = webdriver.Chrome()
 
