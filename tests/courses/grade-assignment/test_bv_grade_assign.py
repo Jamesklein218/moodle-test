@@ -35,9 +35,9 @@ def test_bv(grade):
     driver.find_element(By.NAME, "savechanges").click()
     driver.implicitly_wait(3)
 
-    if int(grade) < 0:
+    if grade < 0:
         assert driver.find_element(By.XPATH, '//div[@id="id_error_grade" and @style="display: block;"]').text == "Grade must be greater than or equal to zero."
-    elif int(grade) > max:
+    elif grade > max:
         assert driver.find_element(By.XPATH, '//div[@id="id_error_grade" and @style="display: block;"]').text == f"Grade must be less than or equal to {max}."
     else:
         try:
