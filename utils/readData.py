@@ -19,3 +19,5 @@ def readDataFromExcel(sheetName):
 
         testcases.append(testcase)
     return testcases
+
+print (readDataFromExcel("Search"))
