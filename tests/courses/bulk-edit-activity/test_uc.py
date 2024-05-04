@@ -127,7 +127,7 @@ def test_uc2_and_uc3():
     driver.quit()
 
 
-def test_uc4_and_uc6():
+def test_uc4():
     driver = webdriver.Chrome()
 
     login(driver, "teacher", "moodle")
@@ -155,31 +155,7 @@ def test_uc4_and_uc6():
     WebDriverWait(driver, 10).until(lambda driver: len(driver.find_elements(
         By.CSS_SELECTOR, "input[id^='cmCheckbox'][type='checkbox']")) == 2 + original_len)
 
-    # Use case 6: Delete activities
-    checkboxes_1 = WebDriverWait(driver, 5).until(lambda driver: driver.find_elements(
-        By.CSS_SELECTOR, "input[id^='cmCheckbox'][type='checkbox']"))
-
-    assert len(checkboxes_1) >= 4
-
-    driver.execute_script(
-        f"document.getElementById(\"{checkboxes_1[1].get_attribute('id')}\").click()")
-    driver.execute_script(
-        f"document.getElementById(\"{checkboxes_1[3].get_attribute('id')}\").click()")
-
-    driver.execute_script("document.querySelector(\"button[title='Delete activities']\").click()")
-
-    import time
-    time.sleep(2)
-
-    WebDriverWait(driver, 10).until(EC.invisibility_of_element_located((By.CLASS_NAME, 'modal-footer')))
-
-    driver.execute_script("document.querySelector(\"button[data-action='delete']\").click()")
-
-    WebDriverWait(driver, 10).until(lambda driver: len(driver.find_elements(
-        By.CSS_SELECTOR, "input[id^='cmCheckbox'][type='checkbox']")) == original_len)
-
     driver.quit()
-
 
 def test_uc5():
     driver = webdriver.Chrome()
@@ -189,3 +165,41 @@ def test_uc5():
     driver.get("https://school.moodledemo.net/course/view.php?id=59")
 
     enable_edit_mode(driver)
+
+def test_uc6():
+    driver = webdriver.Chrome()
+
+    login(driver, "teacher", "moodle")
+
+    driver.get("https://school.moodledemo.net/course/view.php?id=59")
+
+    enable_edit_mode(driver)
+
+    # Bulk action of Moodle is buggy -> Test failed is expected
+    WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.CLASS_NAME, 'bulkEnable'))).click()
+
+    # Use case 6: Delete activities
+    checkboxes = WebDriverWait(driver, 5).until(lambda driver: driver.find_elements(
+        By.CSS_SELECTOR, "input[id^='cmCheckbox'][type='checkbox']"))
+
+    assert len(checkboxes) >= 4
+
+    original_len = len(checkboxes)
+
+    driver.execute_script(
+        f"document.getElementById(\"{checkboxes[1].get_attribute('id')}\").click()")
+    driver.execute_script(
+        f"document.getElementById(\"{checkboxes[3].get_attribute('id')}\").click()")
+
+    driver.execute_script("document.querySelector(\"button[title='Delete activities']\").click()")
+
+    import time
+    time.sleep(2)
+
+    driver.execute_script("document.querySelector(\"button[data-action='delete']\").click()")
+
+    WebDriverWait(driver, 10).until(lambda driver: len(driver.find_elements(
+        By.CSS_SELECTOR, "input[id^='cmCheckbox'][type='checkbox']")) == original_len - 2)
+
+    driver.quit()
+
