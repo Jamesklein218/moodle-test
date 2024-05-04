@@ -5,7 +5,7 @@ xlrd.xlsx.Element_has_iter = True
 
 
 def readDataFromExcel(sheetName):
-    data = open_workbook("./utils/dataTesting.xlsx")
+    data = open_workbook("./dataTesting.xlsx")
     sheet = data.sheet_by_name(sheetName)
     testcases = []
     for row_index in range(1, sheet.nrows):
