@@ -256,10 +256,10 @@ def test_uc7():
     driver.execute_script(f"document.querySelector(\"button[title='Share to MoodleNet']\").click()")
 
     import time
-    time.sleep(2)
+    time.sleep(5)
 
     driver.execute_script(f"document.querySelector(\"button[data-action='share']\").click()")
 
-    assert False # Prone to fail
+    WebDriverWait(driver, 10).until(lambda driver: len(driver.window_handles) == 2)
 
     driver.quit()
