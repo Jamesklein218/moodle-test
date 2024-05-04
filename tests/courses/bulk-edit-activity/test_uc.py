@@ -9,7 +9,7 @@ from utils.auth import login
 from utils.core import enable_edit_mode
 
 
-def test_uc1():
+def test_uc1_and_uc8():
     driver = webdriver.Chrome()
 
     login(driver, "teacher", "moodle")
@@ -34,6 +34,8 @@ def test_uc1():
 
     for bulk_select_input in bulk_select_inputs_after:
         assert bulk_select_input.get_attribute("checked") == "true"
+
+    WebDriverWait(driver, 5).until(lambda driver: driver.find_element(By.CLASS_NAME, 'bulkcount').get_attribute('innerText') == f"{len(bulk_select_inputs_after)} selected")
 
     driver.quit()
 
