@@ -168,6 +168,33 @@ def test_uc5():
 
     enable_edit_mode(driver)
 
+    WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.CLASS_NAME, 'bulkEnable'))).click()
+
+    checkboxes = WebDriverWait(driver, 5).until(lambda driver: driver.find_elements(
+        By.CSS_SELECTOR, "input[id^='cmCheckbox'][type='checkbox']"))
+
+    assert len(checkboxes) >= 2
+
+    ids = [checkbox.get_attribute('id') for checkbox in checkboxes]
+
+    driver.execute_script(f"document.getElementById(\"{checkboxes[0].get_attribute('id')}\").click()")
+    driver.execute_script(f"document.getElementById(\"{checkboxes[1].get_attribute('id')}\").click()")
+
+    driver.execute_script(f"document.querySelector(\"button[title='Move activities']\").click()")
+
+    import time
+    time.sleep(2)
+
+    checkboxes_1 = WebDriverWait(driver, 5).until(lambda driver: driver.find_elements(
+        By.CSS_SELECTOR, "input[id^='cmCheckbox'][type='checkbox']"))
+
+    ids_1 = [checkbox.get_attribute('id') for checkbox in checkboxes_1]
+
+    assert ids[0] == ids_1[-2]
+    assert ids[1] == ids_1[-1]
+
+    driver.quit()
+
 def test_uc6():
     driver = webdriver.Chrome()
 
@@ -205,3 +232,34 @@ def test_uc6():
 
     driver.quit()
 
+
+def test_uc7():
+    driver = webdriver.Chrome()
+
+    login(driver, "teacher", "moodle")
+
+    driver.get("https://school.moodledemo.net/course/view.php?id=59")
+
+    enable_edit_mode(driver)
+
+    WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.CLASS_NAME, 'bulkEnable'))).click()
+
+    checkboxes = WebDriverWait(driver, 5).until(lambda driver: driver.find_elements(
+        By.CSS_SELECTOR, "input[id^='cmCheckbox'][type='checkbox']"))
+
+    assert len(checkboxes) >= 2
+
+    ids = [checkbox.get_attribute('id') for checkbox in checkboxes]
+
+    driver.execute_script(f"document.getElementById(\"{checkboxes[0].get_attribute('id')}\").click()")
+
+    driver.execute_script(f"document.querySelector(\"button[title='Share to MoodleNet']\").click()")
+
+    import time
+    time.sleep(2)
+
+    driver.execute_script(f"document.querySelector(\"button[data-action='share']\").click()")
+
+    assert False # Prone to fail
+
+    driver.quit()
