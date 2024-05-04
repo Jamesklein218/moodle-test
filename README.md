@@ -49,12 +49,14 @@ Note: On Unix, if run test is slow, set DBUS_SESSION_BUS_ADDRESS = /dev/null ([h
 | ID         | Title           | Path                                                       |
 | ---------- | --------------- | ---------------------------------------------------------- |
 | TC-000-000 | Getting Started | [test_selenium](tests/getting_started/test_selenium.py) |
-| TC-007-001 | Bulk edit activity: UC1 | [test_uc1](tests/courses/bulk-edit-activity/test_uc.py) |
+| TC-007-001 | Bulk edit activity: UC1 | [test_uc1_and_uc8](tests/courses/bulk-edit-activity/test_uc.py) |
 | TC-007-002 | Bulk edit activity: UC2 | [test_uc2_and_uc3](tests/courses/bulk-edit-activity/test_uc.py) |
 | TC-007-003 | Bulk edit activity: UC3 | [test_uc2_and_uc3](tests/courses/bulk-edit-activity/test_uc.py) |
-| TC-007-004 | Bulk edit activity: UC4 | [test_uc4_and_uc6](tests/courses/bulk-edit-activity/test_uc.py) |
+| TC-007-004 | Bulk edit activity: UC4 | [test_uc4](tests/courses/bulk-edit-activity/test_uc.py) |
 | TC-007-005 | Bulk edit activity: UC5 | [test_uc5](tests/courses/bulk-edit-activity/test_uc.py) |
-| TC-007-006 | Bulk edit activity: UC6 | [test_uc4_and_uc6](tests/courses/bulk-edit-activity/test_uc.py) |
+| TC-007-006 | Bulk edit activity: UC6 | [test_uc4](tests/courses/bulk-edit-activity/test_uc.py) |
+| TC-007-007 | Bulk edit activity: UC7 | [test_uc7](tests/courses/bulk-edit-activity/test_uc.py) |
+| TC-007-008 | Bulk edit activity: UC8 | [test_uc1_and_uc8](tests/courses/bulk-edit-activity/test_uc.py) |
 | TC-008-001 | Student login | [test_auth_student](tests/authentication/test_login.py) |
 | TC-008-002 | Teacher login | [test_auth_teacher](tests/authentication/test_login.py) |
 | TC-008-003 | Manager login | [test_auth_manager](tests/authentication/test_login.py) |
