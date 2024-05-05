@@ -7,7 +7,7 @@ max = 0
 def genTest():
     driver = webdriver.Chrome()
     login(driver, "teacher", "moodle")
-    driver.get("https://school.moodledemo.net/mod/assign/view.php?id=652&action=grader&userid=48")
+    driver.get("https://school.moodledemo.net/mod/assign/view.php?id=787&action=grader&userid=48")
     driver.implicitly_wait(5)
 
     setup = driver.find_element(By.XPATH, '//label[@for="id_grade"]').text
@@ -22,7 +22,7 @@ test_data = genTest()
 def test_bv(grade):
     driver = webdriver.Chrome()
     login(driver, "teacher", "moodle")
-    driver.get("https://school.moodledemo.net/mod/assign/view.php?id=652&action=grader&userid=48")
+    driver.get("https://school.moodledemo.net/mod/assign/view.php?id=787&action=grader&userid=48")
     driver.implicitly_wait(5)
 
     grade_input = driver.find_element(By.ID, "id_grade")
@@ -33,7 +33,7 @@ def test_bv(grade):
     global max
     
     driver.find_element(By.NAME, "savechanges").click()
-    driver.implicitly_wait(3)
+    driver.implicitly_wait(10)
 
     if grade < 0:
         assert driver.find_element(By.XPATH, '//div[@id="id_error_grade" and @style="display: block;"]').text == "Grade must be greater than or equal to zero."
