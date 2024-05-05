@@ -4,12 +4,12 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
+
 from utils.auth import login
 from utils.core import enable_edit_mode
 
-import time
 
-def test_uc1():
+def test_uc1_and_uc8():
     driver = webdriver.Chrome()
 
     login(driver, "teacher", "moodle")
@@ -20,7 +20,8 @@ def test_uc1():
 
     driver.find_element(By.CLASS_NAME, 'bulkEnable').click()
 
-    first_checkbox = WebDriverWait(driver, 5).until(lambda driver:driver.find_element(By.CSS_SELECTOR, "input[id^='cmCheckbox'][type='checkbox']"))
+    first_checkbox = WebDriverWait(driver, 5).until(lambda driver: driver.find_element(
+        By.CSS_SELECTOR, "input[id^='cmCheckbox'][type='checkbox']"))
     first_checkbox.click()
 
     # https://stackoverflow.com/questions/11908249/debugging-element-is-not-clickable-at-point-error
@@ -28,12 +29,16 @@ def test_uc1():
     # WebDriverWait(driver, 10).until(EC.invisibility_of_element_located((By.ID, 'selectall')))
     # driver.find_element(By.ID, 'selectall').click()
 
-    bulk_select_inputs_after = driver.find_elements(By.CSS_SELECTOR, ".bulkselect input[id^='cmCheckbox'][type='checkbox']")
+    bulk_select_inputs_after = driver.find_elements(
+        By.CSS_SELECTOR, ".bulkselect input[id^='cmCheckbox'][type='checkbox']")
 
     for bulk_select_input in bulk_select_inputs_after:
         assert bulk_select_input.get_attribute("checked") == "true"
 
+    WebDriverWait(driver, 5).until(lambda driver: driver.find_element(By.CLASS_NAME, 'bulkcount').get_attribute('innerText') == f"{len(bulk_select_inputs_after)} selected")
+
     driver.quit()
+
 
 def test_uc2_and_uc3():
     driver = webdriver.Chrome()
@@ -43,7 +48,7 @@ def test_uc2_and_uc3():
     driver.get("https://school.moodledemo.net/course/view.php?id=59")
 
     is_properly_setup = WebDriverWait(driver, 5).until(
-        lambda driver: 
+        lambda driver:
             len(list(filter(lambda x: x.get_attribute('innerText') and "Hidden from students" in str(x.get_attribute('innerText')), driver.find_elements(By.CSS_SELECTOR, "button[id^='dropwdownbutton']")))) == 0)
 
     assert is_properly_setup
@@ -51,67 +56,80 @@ def test_uc2_and_uc3():
     enable_edit_mode(driver)
 
     # Sometimes not working, don't know why
-    WebDriverWait(driver, 5).until(lambda driver: driver.find_element(By.CLASS_NAME, 'bulkEnable')).click()
+    WebDriverWait(driver, 5).until(
+        lambda driver: driver.find_element(By.CLASS_NAME, 'bulkEnable')).click()
 
     # Use case 2: Hide activities
-    checkboxes = WebDriverWait(driver, 5).until(lambda driver:driver.find_elements(By.CSS_SELECTOR, "input[id^='cmCheckbox'][type='checkbox']"))
+    checkboxes = WebDriverWait(driver, 5).until(lambda driver: driver.find_elements(
+        By.CSS_SELECTOR, "input[id^='cmCheckbox'][type='checkbox']"))
 
     assert len(checkboxes) > 5
 
     for box in checkboxes[:5]:
-        driver.execute_script(f"document.getElementById(\"{box.get_attribute('id')}\").click()")
+        driver.execute_script(
+            f"document.getElementById(\"{box.get_attribute('id')}\").click()")
 
-    driver.execute_script(f"document.querySelector(\"button[title='Activity availability']\").click()")
+    driver.execute_script(
+        f"document.querySelector(\"button[title='Activity availability']\").click()")
 
-    modal = WebDriverWait(driver, 5).until(lambda driver:driver.find_element(By.CLASS_NAME, 'modal'))
+    modal = WebDriverWait(driver, 5).until(
+        lambda driver: driver.find_element(By.CLASS_NAME, 'modal'))
 
     assert modal != None
 
-    hide_radio = WebDriverWait(modal, 1).until(lambda modal: modal.find_element(By.ID, 'hideRadio'))
+    hide_radio = WebDriverWait(modal, 1).until(
+        lambda modal: modal.find_element(By.ID, 'hideRadio'))
 
     modal_footer = driver.find_element(By.CLASS_NAME, 'modal-footer')
 
-    WebDriverWait(modal_footer, 5).until(lambda modal_footer:modal_footer.find_elements(By.TAG_NAME, 'button')[1].get_attribute('disabled'))
+    WebDriverWait(modal_footer, 5).until(lambda modal_footer: modal_footer.find_elements(
+        By.TAG_NAME, 'button')[1].get_attribute('disabled'))
 
     hide_radio.click()
 
-    driver.find_element(By.CLASS_NAME, 'modal-footer').find_elements(By.TAG_NAME, 'button')[1].click()
+    driver.find_element(
+        By.CLASS_NAME, 'modal-footer').find_elements(By.TAG_NAME, 'button')[1].click()
 
     WebDriverWait(driver, 5).until(
-        lambda driver: 
+        lambda driver:
             len(list(filter(lambda x: x.get_attribute('innerText') and "Hidden from students" in str(x.get_attribute('innerText')), driver.find_elements(By.CSS_SELECTOR, "button[id^='dropwdownbutton']")))) == 5)
 
     # Use case 3: Show activities
-    checkboxes_1 = WebDriverWait(driver, 5).until(lambda driver:driver.find_elements(By.CSS_SELECTOR, "input[id^='cmCheckbox'][type='checkbox']"))
+    checkboxes_1 = WebDriverWait(driver, 5).until(lambda driver: driver.find_elements(
+        By.CSS_SELECTOR, "input[id^='cmCheckbox'][type='checkbox']"))
 
     assert len(checkboxes_1) > 5
 
     for box in checkboxes_1[:5]:
-        driver.execute_script(f"document.getElementById(\"{box.get_attribute('id')}\").click()")
+        driver.execute_script(
+            f"document.getElementById(\"{box.get_attribute('id')}\").click()")
 
-    driver.execute_script(f"document.querySelector(\"button[title='Activity availability']\").click()")
+    driver.execute_script(
+        f"document.querySelector(\"button[title='Activity availability']\").click()")
 
-    modal = WebDriverWait(driver, 10).until(lambda driver:driver.find_element(By.CLASS_NAME, 'modal'))
+    modal = WebDriverWait(driver, 10).until(
+        lambda driver: driver.find_element(By.CLASS_NAME, 'modal'))
 
     assert modal != None
 
-    show_radio = WebDriverWait(modal, 2).until(lambda modal: modal.find_element(By.ID, 'showRadio'))
+    show_radio = WebDriverWait(modal, 2).until(
+        lambda modal: modal.find_element(By.ID, 'showRadio'))
 
     modal_footer = driver.find_element(By.CLASS_NAME, 'modal-footer')
 
-    WebDriverWait(modal_footer, 10).until(lambda modal_footer:modal_footer.find_elements(By.TAG_NAME, 'button')[1].get_attribute('disabled'))
-
     show_radio.click()
 
-    driver.find_element(By.CLASS_NAME, 'modal-footer').find_elements(By.TAG_NAME, 'button')[1].click()
+    driver.find_element(
+        By.CLASS_NAME, 'modal-footer').find_elements(By.TAG_NAME, 'button')[1].click()
 
     WebDriverWait(driver, 10).until(
-        lambda driver: 
+        lambda driver:
             len(list(filter(lambda x: x.get_attribute('innerText') and "Hidden from students" in str(x.get_attribute('innerText')), driver.find_elements(By.CSS_SELECTOR, "button[id^='dropwdownbutton']")))) == 0)
 
     driver.quit()
 
-def test_uc4_and_uc6():
+
+def test_uc4():
     driver = webdriver.Chrome()
 
     login(driver, "teacher", "moodle")
@@ -120,43 +138,24 @@ def test_uc4_and_uc6():
 
     enable_edit_mode(driver)
 
-    # Sometimes not working, don't know why
-    WebDriverWait(driver, 5).until(lambda driver: driver.find_element(By.CLASS_NAME, 'bulkEnable')).click()
+    # Bulk action of Moodle is buggy -> Test failed is expected
+    WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.CLASS_NAME, 'bulkEnable'))).click()
 
     # Use case 4: Duplicate activities
-    checkboxes = WebDriverWait(driver, 5).until(lambda driver:driver.find_elements(By.CSS_SELECTOR, "input[id^='cmCheckbox'][type='checkbox']"))
+    checkboxes = WebDriverWait(driver, 5).until(lambda driver: driver.find_elements(
+        By.CSS_SELECTOR, "input[id^='cmCheckbox'][type='checkbox']"))
 
     assert len(checkboxes) >= 2
 
     original_len = len(checkboxes)
 
-    for box in checkboxes[:2]:
-        driver.execute_script(f"document.getElementById(\"{box.get_attribute('id')}\").click()")
+    driver.execute_script(f"document.getElementById(\"{checkboxes[0].get_attribute('id')}\").click()")
+    driver.execute_script(f"document.getElementById(\"{checkboxes[1].get_attribute('id')}\").click()")
 
-    WebDriverWait(driver, 5).until(lambda driver: len(driver.find_elements(By.CSS_SELECTOR, "button[title='Duplicate activities'].disabled")) == 0)
     driver.execute_script(f"document.querySelector(\"button[title='Duplicate activities']\").click()")
 
-    is_duplicated = WebDriverWait(driver, 5).until(lambda driver: len(driver.find_elements(By.CSS_SELECTOR, "input[id^='cmCheckbox'][type='checkbox']")) == 2 + original_len)
-
-    assert is_duplicated
-
-    # Use case 6: Delete activities
-    checkboxes_1 = WebDriverWait(driver, 5).until(lambda driver:driver.find_elements(By.CSS_SELECTOR, "input[id^='cmCheckbox'][type='checkbox']"))
-
-    assert len(checkboxes_1) >= 4
-
-    driver.execute_script(f"document.getElementById(\"{checkboxes_1[1].get_attribute('id')}\").click()")
-    driver.execute_script(f"document.getElementById(\"{checkboxes_1[3].get_attribute('id')}\").click()")
-
-    WebDriverWait(driver, 5).until(lambda driver: len(driver.find_elements(By.CSS_SELECTOR, "button[title='Delete activities'].disabled")) == 0)
-    driver.execute_script(f"document.querySelector(\"button[title='Delete activities']\").click()")
-
-    modal_footer = WebDriverWait(driver, 10).until(lambda driver:driver.find_element(By.CLASS_NAME, 'modal-footer'))
-
-    WebDriverWait(modal_footer, 10).until(lambda modal_footer:modal_footer.find_elements(By.TAG_NAME, 'button')[1]).click()
-
-    # TODO: currently not working
-    WebDriverWait(driver, 10).until(lambda driver: len(driver.find_elements(By.CSS_SELECTOR, "input[id^='cmCheckbox'][type='checkbox']")) == original_len)
+    WebDriverWait(driver, 10).until(lambda driver: len(driver.find_elements(
+        By.CSS_SELECTOR, "input[id^='cmCheckbox'][type='checkbox']")) == 2 + original_len)
 
     driver.quit()
 
@@ -168,3 +167,99 @@ def test_uc5():
     driver.get("https://school.moodledemo.net/course/view.php?id=59")
 
     enable_edit_mode(driver)
+
+    WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.CLASS_NAME, 'bulkEnable'))).click()
+
+    checkboxes = WebDriverWait(driver, 5).until(lambda driver: driver.find_elements(
+        By.CSS_SELECTOR, "input[id^='cmCheckbox'][type='checkbox']"))
+
+    assert len(checkboxes) >= 2
+
+    ids = [checkbox.get_attribute('id') for checkbox in checkboxes]
+
+    driver.execute_script(f"document.getElementById(\"{checkboxes[0].get_attribute('id')}\").click()")
+    driver.execute_script(f"document.getElementById(\"{checkboxes[1].get_attribute('id')}\").click()")
+
+    driver.execute_script(f"document.querySelector(\"button[title='Move activities']\").click()")
+
+    import time
+    time.sleep(2)
+
+    checkboxes_1 = WebDriverWait(driver, 5).until(lambda driver: driver.find_elements(
+        By.CSS_SELECTOR, "input[id^='cmCheckbox'][type='checkbox']"))
+
+    ids_1 = [checkbox.get_attribute('id') for checkbox in checkboxes_1]
+
+    assert ids[0] == ids_1[-2]
+    assert ids[1] == ids_1[-1]
+
+    driver.quit()
+
+def test_uc6():
+    driver = webdriver.Chrome()
+
+    login(driver, "teacher", "moodle")
+
+    driver.get("https://school.moodledemo.net/course/view.php?id=59")
+
+    enable_edit_mode(driver)
+
+    # Bulk action of Moodle is buggy -> Test failed is expected
+    WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.CLASS_NAME, 'bulkEnable'))).click()
+
+    # Use case 6: Delete activities
+    checkboxes = WebDriverWait(driver, 5).until(lambda driver: driver.find_elements(
+        By.CSS_SELECTOR, "input[id^='cmCheckbox'][type='checkbox']"))
+
+    assert len(checkboxes) >= 4
+
+    original_len = len(checkboxes)
+
+    driver.execute_script(
+        f"document.getElementById(\"{checkboxes[1].get_attribute('id')}\").click()")
+    driver.execute_script(
+        f"document.getElementById(\"{checkboxes[3].get_attribute('id')}\").click()")
+
+    driver.execute_script("document.querySelector(\"button[title='Delete activities']\").click()")
+
+    import time
+    time.sleep(2)
+
+    driver.execute_script("document.querySelector(\"button[data-action='delete']\").click()")
+
+    WebDriverWait(driver, 10).until(lambda driver: len(driver.find_elements(
+        By.CSS_SELECTOR, "input[id^='cmCheckbox'][type='checkbox']")) == original_len - 2)
+
+    driver.quit()
+
+
+def test_uc7():
+    driver = webdriver.Chrome()
+
+    login(driver, "teacher", "moodle")
+
+    driver.get("https://school.moodledemo.net/course/view.php?id=59")
+
+    enable_edit_mode(driver)
+
+    WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.CLASS_NAME, 'bulkEnable'))).click()
+
+    checkboxes = WebDriverWait(driver, 5).until(lambda driver: driver.find_elements(
+        By.CSS_SELECTOR, "input[id^='cmCheckbox'][type='checkbox']"))
+
+    assert len(checkboxes) >= 2
+
+    ids = [checkbox.get_attribute('id') for checkbox in checkboxes]
+
+    driver.execute_script(f"document.getElementById(\"{checkboxes[0].get_attribute('id')}\").click()")
+
+    driver.execute_script(f"document.querySelector(\"button[title='Share to MoodleNet']\").click()")
+
+    import time
+    time.sleep(5)
+
+    driver.execute_script(f"document.querySelector(\"button[data-action='share']\").click()")
+
+    WebDriverWait(driver, 10).until(lambda driver: len(driver.window_handles) == 2)
+
+    driver.quit()
